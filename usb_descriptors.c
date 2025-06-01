@@ -46,9 +46,9 @@ tusb_desc_device_t const desc_device =
     .bDeviceProtocol    = 0x00,
     .bMaxPacketSize0    = CFG_TUD_ENDPOINT0_SIZE,
 
-	  .idVendor = 0x1209,
-	  .idProduct = 0xC0CA,
-	  .bcdDevice = 0x0111,
+    .idVendor = 0x1209,
+    .idProduct = 0xC0CA,
+    .bcdDevice = 0x0111,
     .iManufacturer      = 0x01,
     .iProduct           = 0x02,
     .iSerialNumber      = 0x03,
@@ -76,7 +76,15 @@ enum
 #if (CDC_UART_INTF_COUNT > 1)
   ITF_NUM_CDC_2 = 3,
   ITF_NUM_CDC_2_DATA,
-#endif 
+#endif
+#if CDC_SOFT_UART_COUNT > 0
+  ITF_NUM_CDC_3 = 5,
+  ITF_NUM_CDC_3_DATA,
+#endif
+#if CDC_SOFT_UART_COUNT > 1
+  ITF_NUM_CDC_4 = 7,
+  ITF_NUM_CDC_4_DATA,
+#endif
   ITF_NUM_TOTAL
 };
 
@@ -91,7 +99,17 @@ enum
 #define CDC_NOTIF_EP2_NUM 0x85
 #define CDC_OUT_EP2_NUM   0x05
 #define CDC_IN_EP2_NUM    0x86
-#endif 
+#endif
+#if CDC_SOFT_UART_COUNT > 0
+#define CDC_NOTIF_EP3_NUM 0x87
+#define CDC_OUT_EP3_NUM   0x07
+#define CDC_IN_EP3_NUM    0x88
+#endif
+#if CDC_SOFT_UART_COUNT > 1
+#define CDC_NOTIF_EP4_NUM 0x89
+#define CDC_OUT_EP4_NUM   0x09
+#define CDC_IN_EP4_NUM    0x8a
+#endif
 
 #define CONFIG_TOTAL_LEN  (TUD_CONFIG_DESC_LEN + TUD_VENDOR_DESC_LEN + (TUD_CDC_DESC_LEN * (CFG_TUD_CDC)))
 
@@ -108,6 +126,12 @@ uint8_t const desc_configuration[CONFIG_TOTAL_LEN] =
 #endif
 #if ( CDC_UART_INTF_COUNT > 1 )
   TUD_CDC_DESCRIPTOR(ITF_NUM_CDC_2, 5, CDC_NOTIF_EP2_NUM, 8, CDC_OUT_EP2_NUM, CDC_IN_EP2_NUM, 64),
+#endif
+#if CDC_SOFT_UART_COUNT > 0
+  TUD_CDC_DESCRIPTOR(ITF_NUM_CDC_3, 6, CDC_NOTIF_EP3_NUM, 8, CDC_OUT_EP3_NUM, CDC_IN_EP3_NUM, 64),
+#endif
+#if CDC_SOFT_UART_COUNT > 1
+  TUD_CDC_DESCRIPTOR(ITF_NUM_CDC_4, 7, CDC_NOTIF_EP4_NUM, 8, CDC_OUT_EP4_NUM, CDC_IN_EP4_NUM, 64),
 #endif
 };
 
@@ -135,7 +159,13 @@ char const *string_desc_arr[] =
     "DirtyJTAG CDC 0", // 4: CDC Interface 0
 #endif
 #if ( CDC_UART_INTF_COUNT > 1 )
-    "DirtyJTAG CDC 1"  // 5: CDC Interface 1
+    "DirtyJTAG CDC 1",  // 5: CDC Interface 1
+#endif
+#if CDC_SOFT_UART_COUNT > 0
+    "EchoUART CDC 2",
+#endif
+#if CDC_SOFT_UART_COUNT > 1
+    "DebugUART CDC 3",
 #endif
 };
 

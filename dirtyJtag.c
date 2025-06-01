@@ -10,8 +10,10 @@
 #include "tusb.h"
 #include "cmd.h"
 #include "get_serial.h"
+#include "cdc_soft_uart.h"
 
 #include "dirtyJtagConfig.h"
+#include "gdb.h"
 
 #define MULTICORE
 
@@ -94,6 +96,9 @@ void jtag_main_task()
 #if ( CDC_UART_INTF_COUNT > 0 )           
             cdc_uart_task();
 #endif
+#if CDC_SOFT_UART_COUNT > 0
+	    cdc_soft_uart_task();
+#endif
         }
     }
 }
@@ -121,7 +126,7 @@ void core1_entry() {
 }
 #endif
 
-void fetch_command()
+static void fetch_command()
 {
 #ifndef MULTICORE
     if (buffer_infos[rd_buffer_number].busy)
@@ -158,7 +163,18 @@ int main()
 #if ( CDC_UART_INTF_COUNT > 1)
     cdc_uart_init( 1, PIN_UART1, PIN_UART1_RX, PIN_UART1_TX );
 #endif
+#if CDC_SOFT_UART_COUNT > 0
+    stdio_cdc_soft_init();
+#endif
+#if CDC_SOFT_UART_COUNT > 1
+    gdb_init(CDC_UART_INTF_COUNT + 1);
+#endif
 
+    stdio_puts("Hello dirtyjtag"
+#ifdef MULTICORE
+	       " [multicore]"
+#endif
+	       "\n");
 
 #ifdef MULTICORE
     multicore_launch_core1(core1_entry);
@@ -167,6 +183,7 @@ int main()
 #endif
     while (1) {
         jtag_main_task();
+	gdb_task();
         fetch_command();//for unicore implementation
     }
 }

@@ -52,6 +52,8 @@
 #define PIN_UART1_TX    4
 #define PIN_UART1_RX    5
 
+#define CDC_SOFT_UART_COUNT 2
+
 #elif ( BOARD_TYPE == BOARD_ADAFRUIT_ITSY )
 
 #define PIN_TDI 28 

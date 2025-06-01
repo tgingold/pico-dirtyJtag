@@ -39,13 +39,15 @@ pico_sdk_init()
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(dirtyJtag
-		dirtyJtag.c
-		usb_descriptors.c
-		pio_jtag.c
+	dirtyJtag.c
+	usb_descriptors.c
+	pio_jtag.c
         cdc_uart.c
-		get_serial.c
-		cmd.c
+	cdc_soft_uart.c
+	get_serial.c
+	cmd.c
         led.c
+	gdb.c
 )
 
 target_include_directories(dirtyJtag PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -56,7 +58,7 @@ pico_generate_pio_header(dirtyJtag ${CMAKE_CURRENT_LIST_DIR}/jtag.pio)
 pico_set_program_name(dirtyJtag "dirtyJtag")
 pico_set_program_version(dirtyJtag "0.1")
 
-#pico_enable_stdio_uart(dirtyJtag 0)
+pico_enable_stdio_uart(dirtyJtag 0)
 #pico_enable_stdio_usb(dirtyJtag 0)
 
 # Add the standard library to the build
@@ -64,7 +66,7 @@ target_link_libraries(dirtyJtag PRIVATE pico_stdlib)
 
 # Add any user requested libraries
 target_link_libraries(dirtyJtag PRIVATE
-    hardware_pio
+	hardware_pio
 	hardware_dma
 	pico_unique_id
 	tinyusb_device

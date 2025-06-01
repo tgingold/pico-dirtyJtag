@@ -66,7 +66,7 @@
 //------------- CLASS -------------//
 #define CFG_TUD_HID             0
 
-#define CFG_TUD_CDC CDC_UART_INTF_COUNT
+#define CFG_TUD_CDC (CDC_UART_INTF_COUNT + CDC_SOFT_UART_COUNT)
 #define CFG_TUD_MSC             0
 #define CFG_TUD_MIDI            0
 #define CFG_TUD_VENDOR          1
